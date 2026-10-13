@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Train Tickets — Paryatan</title>
+  <meta name="description" content="Search train schedules, check seat availability, and book tickets directly to your favorite Indian travel destinations.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Constant Top Bar (Every Page) -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" aria-label="Paryatan Home">
+        <div class="logo-badge">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+            <path d="M3 10h18"></path>
+            <circle cx="8.5" cy="14.5" r="1.5"></circle>
+            <circle cx="15.5" cy="14.5" r="1.5"></circle>
+          </svg>
+        </div>
+        <div class="brand-text">Paryatan<span>.</span></div>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Constant Top Bar in required order: 1. Home, 2. Login/Register, 3. Explore Places, 4. Book a Ticket -->
+      <nav>
+        <ul class="nav-links" id="navLinksList">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <!-- BACKEND INTEGRATION NOTE: The backend swaps this slot for the user's name + Logout -->
+          <li class="nav-user-slot" id="navUserSlot">
+            <a href="auth.html" class="nav-link" id="navAuthLink">Login / Register</a>
+          </li>
+          <li><a href="explore.html" class="nav-link">Explore Places</a></li>
+          <li><a href="booking.html" class="nav-link active">Book a Ticket</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Booking Content Area -->
+  <main class="container">
+    <div class="booking-page-header">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <!-- Breadcrumb -->
+          <nav aria-label="Breadcrumb" style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
+            <a href="index.html" style="color: var(--primary); font-weight: 600;">Home</a>
+            <span style="margin: 0 6px;">/</span>
+            <span style="font-weight: 700; color: var(--text);">Railway Booking Portal</span>
+          </nav>
+          <h1 class="section-heading">Railway Booking Portal</h1>
+          <p class="section-subheading">Destination-first train schedules, seat availability &amp; instant reservations</p>
+        </div>
+
+        <!-- Quick Access to My Bookings / PNR Lookup -->
+        <button type="button" class="btn btn-secondary" id="btnOpenPnrModal">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>Lookup PNR / My Bookings</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         Page 3 Booking Form Contract
+         Backend placeholder: method="POST", action="search_trains.php"
+         Agreed field names: `from`, `to`, `date`, `passengers`, `class`
+         ====================================================================== -->
+    <div class="booking-form-card">
+      <form id="trainSearchForm" method="POST" action="search_trains.php" class="form-grid-5">
+        
+        <!-- Field 1: From (origin station) -->
+        <div class="form-group" id="grpFromStation">
+          <label for="fromStationSelect" class="form-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+            From Station <span style="color:var(--error);">*</span>
+          </label>
+          <select id="fromStationSelect" name="from" class="form-control" required>
+            <option value="">-- Select Origin --</option>
+            <option value="NDLS">New Delhi (NDLS)</option>
+            <option value="CSMT">Mumbai CSMT (CSMT)</option>
+            <option value="HWH">Howrah Jn (HWH)</option>
+            <option value="MAS">Chennai Central (MAS)</option>
+            <option value="SBC">Bengaluru City (SBC)</option>
+            <option value="PUNE">Pune Jn (PUNE)</option>
+            <option value="ADI">Ahmedabad Jn (ADI)</option>
+            <option value="HYB">Hyderabad Deccan (HYB)</option>
+          </select>
+        </div>
+
+        <!-- Field 2: To (prefilled from ?to=, editable) -->
+        <div class="form-group" id="grpToStation">
+          <label for="toStationSelect" class="form-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            To Destination <span style="color:var(--error);">*</span>
+          </label>
+          <select id="toStationSelect" name="to" class="form-control" required>
+            <option value="">-- Select Destination --</option>
+            <optgroup label="Architecture Destinations">
+              <option value="AGC">Agra Cantt (Taj Mahal)</option>
+              <option value="JP">Jaipur Junction (Amer Fort)</option>
+              <option value="HPT">Hosapete Junction (Virupaksha Temple)</option>
+              <option value="MYS">Mysuru Junction (Mysore Palace)</option>
+              <option value="PURI">Puri (Konark Sun Temple)</option>
+            </optgroup>
+            <optgroup label="Beach Destinations">
+              <option value="THVM">Thivim (Ashwem &amp; Arambol)</option>
+              <option value="MAO">Madgaon Junction (Varca)</option>
+              <option value="GOK">Gokarna Road (Om Beach)</option>
+              <option value="VAK">Varkala Sivagiri (Varkala Beach)</option>
+            </optgroup>
+            <optgroup label="Mountain Destinations">
+              <option value="AWY">Aluva (Anamudi &amp; Meesapulimala)</option>
+              <option value="UAM">Udhagamandalam (Doddabetta)</option>
+              <option value="ABR">Abu Road (Guru Shikhar)</option>
+              <option value="PPI">Pipariya (Dhupgarh)</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Field 3: Travel Date (date, not in the past) -->
+        <div class="form-group" id="grpTravelDate">
+          <label for="travelDateInput" class="form-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Travel Date <span style="color:var(--error);">*</span>
+          </label>
+          <input type="date" id="travelDateInput" name="date" class="form-control" required>
+        </div>
+
+        <!-- Field 4: Passengers (number 1-6) -->
+        <div class="form-group" id="grpPassengers">
+          <label for="passengersInput" class="form-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Passengers
+          </label>
+          <select id="passengersInput" name="passengers" class="form-control">
+            <option value="1">1 Passenger</option>
+            <option value="2">2 Passengers</option>
+            <option value="3">3 Passengers</option>
+            <option value="4">4 Passengers</option>
+            <option value="5">5 Passengers</option>
+            <option value="6">6 Passengers</option>
+          </select>
+        </div>
+
+        <!-- Field 5: Class (select: SL, 3A, 2A, 1A) -->
+        <div class="form-group" id="grpClass">
+          <label for="travelClassSelect" class="form-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            Class Filter
+          </label>
+          <select id="travelClassSelect" name="class" class="form-control">
+            <option value="ALL">All Travel Classes</option>
+            <option value="SL">Sleeper (SL)</option>
+            <option value="3A">AC 3 Tier (3A)</option>
+            <option value="2A">AC 2 Tier (2A)</option>
+            <option value="1A">AC First Class (1A)</option>
+          </select>
+        </div>
+
+        <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px;">
+          <button type="submit" class="btn btn-primary btn-large" id="btnSearchTrains">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Search Available Trains</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ======================================================================
+         Train Results Area (Spec Requirement: Container filled by backend/JS)
+         Includes one static sample result card showing the expected layout
+         ====================================================================== -->
+    <section class="train-results-section" id="trainResultsSection">
+      <div class="results-header-bar">
+        <div>
+          <h2 class="results-count-title" id="resultsCountHeading">Matching Train Results</h2>
+          <div id="resultsRouteSub" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+            Showing trains connecting selected railway junctions
+          </div>
+        </div>
+        <div class="results-date-tag" id="resultsDateBadge">Date: Flexible</div>
+      </div>
+
+      <!-- Dynamic Train Cards Container -->
+      <div id="trainsListContainer">
+        
+        <!-- SAMPLE STATIC RESULT CARD (Per Spec: "Include one static sample result card showing expected layout") -->
+        <div class="train-card" id="sampleStaticTrainCard">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span class="chip" style="background:#FFF3E0; color:#E65100; border-color:#FFE0B2; font-weight:700;">
+              SPEC REFERENCE SAMPLE LAYOUT
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-light);">Sample trains marked for frontend verification</span>
+          </div>
+
+          <div class="train-card-top">
+            <div class="train-title-wrap">
+              <span class="train-number-tag">12002</span>
+              <span class="train-name">Bhopal Shatabdi Express</span>
+            </div>
+            <span class="train-runs-on">Runs on: M T W T F S S</span>
+          </div>
+
+          <div class="train-schedule-row">
+            <div class="station-time-col">
+              <div class="time-val">06:00</div>
+              <div class="station-val">New Delhi (NDLS)</div>
+            </div>
+
+            <div class="duration-indicator">
+              <div class="duration-time-text">01h 55m</div>
+              <div class="duration-line"></div>
+              <div style="font-size: 0.72rem; color: var(--text-light);">Direct Superfast</div>
+            </div>
+
+            <div class="station-time-col arrival">
+              <div class="time-val">07:55</div>
+              <div class="station-val">Agra Cantt (AGC)</div>
+            </div>
+          </div>
+
+          <!-- Classes with seats and book button -->
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+            <div class="classes-grid" style="flex: 1;">
+              <div class="class-card-btn selected" onclick="initiateBookingModal('12002', '3A', 980)">
+                <div class="class-name-row">
+                  <span class="class-code">3A</span>
+                  <span class="class-fare">₹980</span>
+                </div>
+                <span class="class-status">AVAILABLE - 80</span>
+              </div>
+
+              <div class="class-card-btn" onclick="initiateBookingModal('12002', '2A', 1450)">
+                <div class="class-name-row">
+                  <span class="class-code">2A</span>
+                  <span class="class-fare">₹1,450</span>
+                </div>
+                <span class="class-status">AVAILABLE - 45</span>
+              </div>
+
+              <div class="class-card-btn" onclick="initiateBookingModal('12002', '1A', 2150)">
+                <div class="class-name-row">
+                  <span class="class-code">1A</span>
+                  <span class="class-fare">₹2,150</span>
+                </div>
+                <span class="class-status">AVAILABLE - 25</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="initiateBookingModal('12002', '3A', 980)">
+              <span>Book Selected</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       Booking Portal Modal (Passenger details, Fare, Demo Payment, Ticket)
+       Per Prompt: "Passenger details (up to 6), contact info, fare summary,
+       mock payment form clearly labelled as demo, then ticket with generated PNR"
+       ====================================================================== -->
+  <div class="modal-backdrop" id="bookingModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="bookingModalTitle">
+    <div class="booking-modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="bookingModalTitle">Passenger Details &amp; Reservation</h2>
+        <button type="button" class="modal-close-btn" id="btnCloseBookingModal" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Step 1: Passenger Information Form -->
+        <form id="bookingPortalForm">
+          <div style="background: var(--chip-bg); padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <strong id="modalTrainName" style="color: var(--text);">12002 Bhopal Shatabdi</strong>
+              <div id="modalTrainRoute" style="font-size: 0.8rem; color: var(--text-muted);">NDLS &rarr; AGC</div>
+            </div>
+            <div style="text-align: right;">
+              <span class="chip" id="modalClassBadge">Class: 3A</span>
+              <div id="modalDateBadge" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px;">Date: Tomorrow</div>
+            </div>
+          </div>
+
+          <!-- Dynamic Passenger Inputs (1 to 6) -->
+          <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h3 style="font-size: 1rem; font-weight: 700;">Passengers Information</h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);" id="modalPaxCountLabel">1 of max 6</span>
+            </div>
+            <div id="passengerInputsContainer">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Contact Details -->
+          <div style="margin-bottom: 20px;">
+            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 10px;">Contact &amp; Ticket Delivery</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label for="contactEmail" class="form-label">Email Address <span style="color:var(--error);">*</span></label>
+                <input type="email" id="contactEmail" class="form-control" placeholder="traveler@example.com" required>
+              </div>
+              <div class="form-group">
+                <label for="contactPhone" class="form-label">Mobile Number <span style="color:var(--error);">*</span></label>
+                <input type="tel" id="contactPhone" class="form-control" placeholder="9876543210" pattern="[0-9]{10}" maxlength="10" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fare Breakdown Summary -->
+          <div class="fare-breakdown-card">
+            <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 10px;">Fare Breakdown</h4>
+            <div class="fare-row">
+              <span>Base Fare (<span id="fareBaseUnits">1</span> pax)</span>
+              <span id="fareBaseAmount">₹980</span>
+            </div>
+            <div class="fare-row">
+              <span>Reservation &amp; Superfast Charge</span>
+              <span id="fareReservationFee">₹40</span>
+            </div>
+            <div class="fare-row">
+              <span>GST (5%)</span>
+              <span id="fareGstAmount">₹49</span>
+            </div>
+            <div class="fare-row total">
+              <span>Total Payable</span>
+              <span id="fareTotalAmount" style="color: var(--primary);">₹1,069</span>
+            </div>
+          </div>
+
+          <!-- DEMO / SIMULATION PAYMENT SECTION (Clearly labelled as required by prompt) -->
+          <div class="demo-payment-banner">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E65100" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <div>
+              <strong>DEMO PAYMENT SIMULATION:</strong> This is a front-end simulation prototype. No real money will be charged.
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+            <label style="flex: 1; border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+              <input type="radio" name="paymentMode" value="UPI" checked>
+              <strong>UPI Simulation (Instant)</strong>
+            </label>
+            <label style="flex: 1; border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+              <input type="radio" name="paymentMode" value="CARD">
+              <strong>Mock Card / Net Banking</strong>
+            </label>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-large" id="btnConfirmPay">
+              <span>Confirm &amp; Generate PNR</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <!-- Step 2: Confirmed Ticket Display with PNR (Shown after payment) -->
+        <div id="confirmedTicketContainer" style="display: none;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="width: 50px; height: 50px; background: var(--success-bg); color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.4rem; font-weight: 800; color: var(--success);">Reservation Confirmed!</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Your electronic reservation slip has been generated and saved.</p>
+          </div>
+
+          <div class="ticket-wrapper" id="printableTicketArea">
+            <div class="ticket-header-strip">
+              <div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: var(--text);">PARYATAN ELECTRONIC TICKET (e-ERS)</div>
+                <div style="font-size: 0.78rem; color: var(--text-light);">Destination-First Indian Railways Partner</div>
+              </div>
+              <div class="pnr-display-block">
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">PNR NUMBER</div>
+                <div class="pnr-number" id="ticketPnrValue">2489123456</div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; font-size: 0.85rem;">
+              <div>
+                <strong>Train:</strong> <span id="ticketTrainInfo">12002 Bhopal Shatabdi</span><br>
+                <strong>From:</strong> <span id="ticketFromStation">New Delhi (NDLS)</span><br>
+                <strong>To:</strong> <span id="ticketToStation">Agra Cantt (AGC)</span>
+              </div>
+              <div style="text-align: right;">
+                <strong>Date of Journey:</strong> <span id="ticketDateValue">Tomorrow</span><br>
+                <strong>Class:</strong> <span id="ticketClassValue">3A</span><br>
+                <strong>Total Fare Paid:</strong> <span id="ticketTotalAmount">₹1,069</span>
+              </div>
+            </div>
+
+            <!-- Passenger list table -->
+            <table class="ticket-pax-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Passenger Name</th>
+                  <th>Age / Gender</th>
+                  <th>Coach / Berth</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="ticketPaxTableBody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 0.75rem; color: var(--text-light);">
+              <span>Booked on: <span id="ticketBookedDate">Just now</span></span>
+              <span>Valid with Government Photo ID (Aadhaar / Voter / Passport)</span>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <button type="button" class="btn btn-secondary" onclick="window.print()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              <span>Print Ticket</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="closeBookingModal(); window.location.reload();">
+              Done / Book Another
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       PNR Lookup & My Bookings Modal
+       ====================================================================== -->
+  <div class="modal-backdrop" id="pnrLookupModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="pnrModalTitle">
+    <div class="booking-modal-card" style="max-width: 620px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="pnrModalTitle">PNR Status &amp; My Bookings</h2>
+        <button type="button" class="modal-close-btn" id="btnClosePnrModal" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="pnrSearchForm" style="display: flex; gap: 10px; margin-bottom: 20px;">
+          <input 
+            type="text" 
+            id="pnrInputBox" 
+            class="form-control" 
+            placeholder="Enter 10-digit PNR Number" 
+            maxlength="10" 
+            pattern="[0-9]{10}" 
+            required
+            style="font-size: 1.05rem; letter-spacing: 0.05em;"
+          >
+          <button type="submit" class="btn btn-primary">
+            <span>Lookup</span>
+          </button>
+        </form>
+
+        <div id="pnrResultArea" style="margin-bottom: 24px;"></div>
+
+        <!-- Stored Bookings in localStorage -->
+        <div>
+          <h3 style="font-size: 0.95rem; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+            Recent Bookings Saved on this Device
+          </h3>
+          <div id="storedBookingsContainer" style="overflow-x: auto;">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <div class="logo-badge" style="width: 32px; height: 32px;">
+              <svg viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+                <path d="M3 10h18"></path>
+                <circle cx="8.5" cy="14.5" r="1.5"></circle>
+                <circle cx="15.5" cy="14.5" r="1.5"></circle>
+              </svg>
+            </div>
+            <div class="brand-text">Paryatan<span>.</span></div>
+          </div>
+          <p>Book railway tickets to India's top 15 destinations with automatic station mapping and live seat validation.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Explore Categories</h4>
+          <ul class="footer-links">
+            <li><a href="explore.html?cat=mountains">Enchanting Mountains</a></li>
+            <li><a href="explore.html?cat=architecture">Architectural Marvels</a></li>
+            <li><a href="explore.html?cat=beaches">Relaxing Beaches</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="explore.html">Explore Spots</a></li>
+            <li><a href="booking.html">Book a Ticket</a></li>
+            <li><a href="auth.html">Login / Register</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Backend Contract</h4>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+            Form fields aligned with <code>search_trains.php</code>: <code>from</code>, <code>to</code>, <code>date</code>, <code>passengers</code>, <code>class</code>.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Paryatan. All rights reserved.</p>
+        <div class="credits-notice">
+          <strong>Notice:</strong> Prototype simulation adheres to Indian Railways PNR and passenger ticketing logic.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data/stations.js"></script>
+  <script src="js/data/spots.js"></script>
+  <script src="js/data/trains.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+
+  <script>
+    // State
+    let currentSelectedTrainId = null;
+    let currentSelectedClass = "3A";
+    let currentFarePerPax = 980;
+    let currentPaxCount = 1;
+
+    // Elements
+    const searchForm = document.getElementById("trainSearchForm");
+    const fromSelect = document.getElementById("fromStationSelect");
+    const toSelect = document.getElementById("toStationSelect");
+    const dateInput = document.getElementById("travelDateInput");
+    const paxSelect = document.getElementById("passengersInput");
+    const classSelect = document.getElementById("travelClassSelect");
+    const resultsContainer = document.getElementById("trainsListContainer");
+    const resultsCountHeading = document.getElementById("resultsCountHeading");
+    const resultsRouteSub = document.getElementById("resultsRouteSub");
+    const resultsDateBadge = document.getElementById("resultsDateBadge");
+
+    // Modal elements
+    const bookingModal = document.getElementById("bookingModalBackdrop");
+    const pnrModal = document.getElementById("pnrLookupModalBackdrop");
+    const bookingForm = document.getElementById("bookingPortalForm");
+    const confirmedContainer = document.getElementById("confirmedTicketContainer");
+
+    // Initialize page
+    document.addEventListener("DOMContentLoaded", () => {
+      // Set date picker default to tomorrow and min to today
+      const today = new Date();
+      const tomorrow = new Date();
+      tomorrow.setDate(today.getDate() + 1);
+
+      const todayStr = today.toISOString().split("T")[0];
+      const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+      dateInput.min = todayStr;
+      dateInput.value = tomorrowStr;
+
+      // Handle query parameters (?to=<station>&from=<station>&date=<date>&passengers=<n>)
+      const urlParams = new URLSearchParams(window.location.search);
+      const toParam = urlParams.get("to");
+      const fromParam = urlParams.get("from");
+      const dateParam = urlParams.get("date");
+      const paxParam = urlParams.get("passengers");
+      const spotParam = urlParams.get("spot");
+
+      if (dateParam) dateInput.value = dateParam;
+      if (paxParam) paxSelect.value = paxParam;
+
+      if (fromParam) {
+        fromSelect.value = fromParam.toUpperCase();
+      } else {
+        fromSelect.value = "NDLS"; // sensible default origin
+      }
+
+      if (toParam) {
+        // Find matching station code or spot
+        const matchedStation = ParyatanAPI.getStation(toParam);
+        if (matchedStation) {
+          toSelect.value = matchedStation.code;
+        } else if (spotParam) {
+          const spot = ParyatanAPI.getSpot(spotParam);
+          if (spot && spot.nearestStation) {
+            toSelect.value = spot.nearestStation.code;
+          }
+        }
+      } else {
+        toSelect.value = "AGC"; // default to Agra Cantt
+      }
+
+      // Automatically execute search if parameters are present
+      executeTrainSearch();
+    });
+
+    // Handle Search Form Submission
+    searchForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      executeTrainSearch();
+    });
+
+    function executeTrainSearch() {
+      const from = fromSelect.value;
+      const to = toSelect.value;
+      const date = dateInput.value;
+      const classFilter = classSelect.value;
+      currentPaxCount = parseInt(paxSelect.value, 10) || 1;
+
+      if (!from || !to) {
+        showToast("Please select both origin and destination stations.");
+        return;
+      }
+
+      if (from === to) {
+        showToast("Origin and destination cannot be the same station.");
+        return;
+      }
+
+      resultsDateBadge.textContent = `Date: ${date}`;
+      const fromObj = ParyatanAPI.getStation(from);
+      const toObj = ParyatanAPI.getStation(to);
+
+      const fromName = fromObj ? `${fromObj.name} (${fromObj.code})` : from;
+      const toName = toObj ? `${toObj.name} (${toObj.code})` : to;
+      resultsRouteSub.textContent = `Showing trains from ${fromName} to ${toName}`;
+
+      const trains = ParyatanAPI.searchTrains(from, to, date);
+
+      // Filter by class if specific class selected
+      let filteredTrains = trains;
+      if (classFilter !== "ALL") {
+        filteredTrains = trains.filter(t => t.classes && t.classes[classFilter]);
+      }
+
+      if (filteredTrains.length === 0) {
+        resultsCountHeading.textContent = "No Direct Trains Found";
+        resultsContainer.innerHTML = `
+          <div class="card" style="text-align: center; padding: 40px 20px;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" style="margin: 0 auto 12px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px;">No Direct Trains on This Route</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 480px; margin: 0 auto 20px;">
+              No sample trains currently schedule a direct stop between ${fromName} and ${toName} on ${date}.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" onclick="tryPopularRoute('NDLS', 'AGC')">Try New Delhi &rarr; Agra Cantt</button>
+              <button type="button" class="btn btn-outline" onclick="tryPopularRoute('CSMT', 'THVM')">Try Mumbai &rarr; Goa (Thivim)</button>
+              <button type="button" class="btn btn-outline" onclick="tryPopularRoute('MAS', 'MYS')">Try Chennai &rarr; Mysuru</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      resultsCountHeading.textContent = `${filteredTrains.length} Train${filteredTrains.length > 1 ? "s" : ""} Available`;
+      resultsContainer.innerHTML = "";
+
+      filteredTrains.forEach(train => {
+        const card = document.createElement("div");
+        card.className = "train-card";
+
+        const classesHtml = Object.keys(train.classes)
+          .filter(cls => classFilter === "ALL" || cls === classFilter)
+          .map((cls, idx) => {
+            const info = train.classes[cls];
+            const isSelected = idx === 0;
+            const isAvailable = info.seatsLeft > 0;
+            const statusClass = !isAvailable ? "regret" : (info.seatsLeft < 10 ? "wl" : "");
+
+            return `
+              <div 
+                class="class-card-btn ${isSelected ? "selected" : ""}" 
+                data-train="${train.id}" 
+                data-class="${cls}" 
+                data-fare="${info.fare}"
+                onclick="selectTrainClassCard(this, '${train.id}', '${cls}', ${info.fare})"
+              >
+                <div class="class-name-row">
+                  <span class="class-code">${cls}</span>
+                  <span class="class-fare">₹${info.fare.toLocaleString()}</span>
+                </div>
+                <span class="class-status ${statusClass}">${info.status}</span>
+              </div>
+            `;
+          }).join("");
+
+        // First available class
+        const defaultClass = Object.keys(train.classes)[0];
+        const defaultFare = train.classes[defaultClass].fare;
+
+        card.innerHTML = `
+          <div class="train-card-top">
+            <div class="train-title-wrap">
+              <span class="train-number-tag">${train.number}</span>
+              <span class="train-name">${train.name}</span>
+            </div>
+            <span class="train-runs-on">Runs: ${train.runsOn.join(" ")}</span>
+          </div>
+
+          <div class="train-schedule-row">
+            <div class="station-time-col">
+              <div class="time-val">${train.from.dep}</div>
+              <div class="station-val">${fromName}</div>
+            </div>
+
+            <div class="duration-indicator">
+              <div class="duration-time-text">Direct Express</div>
+              <div class="duration-line"></div>
+              <div style="font-size: 0.72rem; color: var(--text-light);">${train.stops ? train.stops.length : 3} Stops</div>
+            </div>
+
+            <div class="station-time-col arrival">
+              <div class="time-val">${train.to.arr}</div>
+              <div class="station-val">${toName}</div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+            <div class="classes-grid" id="classesGrid_${train.id}" style="flex: 1;">
+              ${classesHtml}
+            </div>
+
+            <button 
+              type="button" 
+              class="btn btn-primary" 
+              id="btnBook_${train.id}" 
+              onclick="initiateBookingModal('${train.id}', '${defaultClass}', ${defaultFare})"
+            >
+              <span>Book Ticket</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        `;
+
+        resultsContainer.appendChild(card);
+      });
+    }
+
+    function tryPopularRoute(from, to) {
+      fromSelect.value = from;
+      toSelect.value = to;
+      executeTrainSearch();
+    }
+
+    function selectTrainClassCard(elem, trainId, cls, fare) {
+      const container = document.getElementById(`classesGrid_${trainId}`);
+      if (container) {
+        container.querySelectorAll(".class-card-btn").forEach(btn => btn.classList.remove("selected"));
+        elem.classList.add("selected");
+      }
+      const bookBtn = document.getElementById(`btnBook_${trainId}`);
+      if (bookBtn) {
+        bookBtn.setAttribute("onclick", `initiateBookingModal('${trainId}', '${cls}', ${fare})`);
+      }
+    }
+
+    // =========================================================================
+    // Booking Portal Flow
+    // =========================================================================
+    function initiateBookingModal(trainId, travelClass, fare) {
+      currentSelectedTrainId = trainId;
+      currentSelectedClass = travelClass;
+      currentFarePerPax = fare;
+      currentPaxCount = parseInt(paxSelect.value, 10) || 1;
+
+      const date = dateInput.value;
+      const train = TRAINS.find(t => t.id === trainId);
+      const fromObj = ParyatanAPI.getStation(fromSelect.value);
+      const toObj = ParyatanAPI.getStation(toSelect.value);
+
+      // Check availability before opening modal
+      const avail = ParyatanAPI.getAvailability(trainId, travelClass, date);
+      if (avail.seatsLeft < currentPaxCount) {
+        alert(`Cannot proceed: Only ${avail.seatsLeft} seat(s) available for class ${travelClass} on ${date}.`);
+        return;
+      }
+
+      // Populate header info
+      document.getElementById("modalTrainName").textContent = `${train ? train.number : ""} ${train ? train.name : "Express"}`;
+      document.getElementById("modalTrainRoute").textContent = `${fromObj ? fromObj.name : fromSelect.value} → ${toObj ? toObj.name : toSelect.value}`;
+      document.getElementById("modalClassBadge").textContent = `Class: ${travelClass}`;
+      document.getElementById("modalDateBadge").textContent = `Date: ${date}`;
+      document.getElementById("modalPaxCountLabel").textContent = `${currentPaxCount} Passenger${currentPaxCount > 1 ? "s" : ""}`;
+
+      // Pre-fill user contact if signed in
+      const currentUser = ParyatanAPI.getCurrentUser();
+      if (currentUser) {
+        if (currentUser.email) document.getElementById("contactEmail").value = currentUser.email;
+        if (currentUser.phone) document.getElementById("contactPhone").value = currentUser.phone;
+      }
+
+      // Generate Passenger Input Fields
+      generatePassengerInputFields(currentPaxCount, currentUser);
+
+      // Calculate Fare Breakdown
+      calculateFareSummary();
+
+      // Reset modal view states
+      bookingForm.style.display = "block";
+      confirmedContainer.style.display = "none";
+      bookingModal.classList.add("show");
+    }
+
+    function closeBookingModal() {
+      bookingModal.classList.remove("show");
+    }
+
+    function generatePassengerInputFields(count, defaultUser) {
+      const container = document.getElementById("passengerInputsContainer");
+      container.innerHTML = "";
+
+      for (let i = 1; i <= count; i++) {
+        const defaultName = (i === 1 && defaultUser && defaultUser.name) ? defaultUser.name : "";
+        const defaultAge = (i === 1 && defaultUser && defaultUser.age) ? defaultUser.age : "";
+
+        const card = document.createElement("div");
+        card.className = "passenger-card";
+        card.innerHTML = `
+          <div class="passenger-card-title">
+            <span>Passenger ${i}</span>
+            <span style="font-size:0.75rem; color:var(--text-light);">Government ID required at journey</span>
+          </div>
+          <div class="passenger-form-row">
+            <div class="form-group">
+              <label class="form-label" style="font-size:0.75rem;">Full Name *</label>
+              <input type="text" class="form-control pax-name" placeholder="Name as on ID" value="${defaultName}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:0.75rem;">Age *</label>
+              <input type="number" class="form-control pax-age" min="1" max="120" placeholder="Age" value="${defaultAge}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:0.75rem;">Gender *</label>
+              <select class="form-control pax-gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Transgender">Transgender</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:0.75rem;">Berth Pref.</label>
+              <select class="form-control pax-berth">
+                <option value="No Preference">No Preference</option>
+                <option value="Lower">Lower</option>
+                <option value="Middle">Middle</option>
+                <option value="Upper">Upper</option>
+                <option value="Side Lower">Side Lower</option>
+                <option value="Side Upper">Side Upper</option>
+              </select>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function calculateFareSummary() {
+      const baseFare = currentFarePerPax * currentPaxCount;
+      const resFee = 40 * currentPaxCount;
+      const gst = Math.round(baseFare * 0.05);
+      const total = baseFare + resFee + gst;
+
+      document.getElementById("fareBaseUnits").textContent = currentPaxCount;
+      document.getElementById("fareBaseAmount").textContent = `₹${baseFare.toLocaleString()}`;
+      document.getElementById("fareReservationFee").textContent = `₹${resFee}`;
+      document.getElementById("fareGstAmount").textContent = `₹${gst}`;
+      document.getElementById("fareTotalAmount").textContent = `₹${total.toLocaleString()}`;
+    }
+
+    // Submit Booking Form & Execute Reservation
+    bookingForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const names = document.querySelectorAll(".pax-name");
+      const ages = document.querySelectorAll(".pax-age");
+      const genders = document.querySelectorAll(".pax-gender");
+      const berths = document.querySelectorAll(".pax-berth");
+
+      const passengers = [];
+      for (let i = 0; i < names.length; i++) {
+        const nameVal = names[i].value.trim();
+        const ageVal = parseInt(ages[i].value, 10);
+        if (!nameVal || isNaN(ageVal)) {
+          alert(`Please fill all fields for passenger ${i + 1}.`);
+          return;
+        }
+        passengers.push({
+          name: nameVal,
+          age: ageVal,
+          gender: genders[i].value,
+          berthPreference: berths[i].value
+        });
+      }
+
+      const emailVal = document.getElementById("contactEmail").value.trim();
+      const phoneVal = document.getElementById("contactPhone").value.trim();
+
+      if (!/^\d{10}$/.test(phoneVal)) {
+        alert("Mobile number must be exactly 10 digits.");
+        return;
+      }
+
+      const fromObj = ParyatanAPI.getStation(fromSelect.value);
+      const toObj = ParyatanAPI.getStation(toSelect.value);
+
+      const bookingPayload = {
+        trainId: currentSelectedTrainId,
+        travelClass: currentSelectedClass,
+        travelDate: dateInput.value,
+        fromStation: fromObj ? `${fromObj.name} (${fromObj.code})` : fromSelect.value,
+        toStation: toObj ? `${toObj.name} (${toObj.code})` : toSelect.value,
+        passengers: passengers,
+        contact: {
+          email: emailVal,
+          phone: phoneVal
+        }
+      };
+
+      try {
+        // API will check availability and block overbooking
+        const newBooking = ParyatanAPI.createBooking(bookingPayload);
+        displayConfirmedTicket(newBooking);
+      } catch (err) {
+        alert(`Booking failed: ${err.message}`);
+      }
+    });
+
+    function displayConfirmedTicket(booking) {
+      bookingForm.style.display = "none";
+      confirmedContainer.style.display = "block";
+
+      document.getElementById("ticketPnrValue").textContent = booking.pnr;
+      document.getElementById("ticketTrainInfo").textContent = `${booking.trainNumber} ${booking.trainName}`;
+      document.getElementById("ticketFromStation").textContent = booking.fromStation;
+      document.getElementById("ticketToStation").textContent = booking.toStation;
+      document.getElementById("ticketDateValue").textContent = booking.travelDate;
+      document.getElementById("ticketClassValue").textContent = booking.travelClass;
+      document.getElementById("ticketTotalAmount").textContent = `₹${booking.pricing.totalAmount.toLocaleString()}`;
+      document.getElementById("ticketBookedDate").textContent = new Date().toLocaleString();
+
+      const tbody = document.getElementById("ticketPaxTableBody");
+      tbody.innerHTML = booking.passengers.map((p, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td><strong>${p.name}</strong></td>
+          <td>${p.age} / ${p.gender}</td>
+          <td><span class="chip" style="background:#E8F5E9; color:#2E7D32;">${p.seatNumber} (${p.berthAllocated})</span></td>
+          <td><strong style="color:var(--success);">${p.status}</strong></td>
+        </tr>
+      `).join("");
+
+      showToast("Booking Confirmed! PNR: " + booking.pnr);
+    }
+
+    // =========================================================================
+    // PNR Lookup & My Bookings Modal Logic
+    // =========================================================================
+    const btnOpenPnr = document.getElementById("btnOpenPnrModal");
+    const btnClosePnr = document.getElementById("btnClosePnrModal");
+    const btnCloseBooking = document.getElementById("btnCloseBookingModal");
+    const pnrForm = document.getElementById("pnrSearchForm");
+    const pnrInput = document.getElementById("pnrInputBox");
+    const pnrResultArea = document.getElementById("pnrResultArea");
+    const storedContainer = document.getElementById("storedBookingsContainer");
+
+    btnOpenPnr.addEventListener("click", () => {
+      pnrModal.classList.add("show");
+      renderStoredBookingsTable();
+    });
+
+    btnClosePnr.addEventListener("click", () => {
+      pnrModal.classList.remove("show");
+    });
+
+    btnCloseBooking.addEventListener("click", closeBookingModal);
+
+    pnrForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const pnrQuery = pnrInput.value.trim();
+      const booking = ParyatanAPI.getBooking(pnrQuery);
+
+      if (!booking) {
+        pnrResultArea.innerHTML = `
+          <div class="auth-alert-box show error">
+            No booking found matching PNR "${pnrQuery}". Please check the 10-digit number.
+          </div>
+        `;
+      } else {
+        pnrResultArea.innerHTML = `
+          <div class="ticket-wrapper" style="margin-top: 0;">
+            <div class="ticket-header-strip">
+              <div>
+                <strong>${booking.trainNumber} ${booking.trainName}</strong>
+                <div style="font-size:0.75rem; color:var(--text-muted);">${booking.fromStation} &rarr; ${booking.toStation}</div>
+              </div>
+              <div class="pnr-display-block">
+                <div style="font-size:0.75rem; color:var(--text-muted);">PNR: ${booking.pnr}</div>
+                <span class="chip" style="background:${booking.status === 'CANCELLED' ? '#FFEBEE' : '#E8F5E9'}; color:${booking.status === 'CANCELLED' ? '#D32F2F' : '#2E7D32'}; font-weight:700;">
+                  ${booking.status}
+                </span>
+              </div>
+            </div>
+            <div style="font-size:0.82rem; margin-bottom: 8px;">
+              Date: <strong>${booking.travelDate}</strong> | Class: <strong>${booking.travelClass}</strong> | Total: <strong>₹${booking.pricing.totalAmount}</strong>
+            </div>
+            <div style="font-size:0.82rem; color:var(--text-muted);">
+              Passengers (${booking.passengers.length}): ${booking.passengers.map(p => `${p.name} (${p.seatNumber})`).join(", ")}
+            </div>
+          </div>
+        `;
+      }
+    });
+
+    function renderStoredBookingsTable() {
+      const allBookings = ParyatanAPI.getAllBookings();
+      if (!allBookings || allBookings.length === 0) {
+        storedContainer.innerHTML = `
+          <p style="font-size: 0.85rem; color: var(--text-muted); padding: 14px 0;">
+            No bookings recorded in this browser session yet. Book your first trip above!
+          </p>
+        `;
+        return;
+      }
+
+      storedContainer.innerHTML = `
+        <table class="bookings-list-table">
+          <thead>
+            <tr>
+              <th>PNR</th>
+              <th>Train</th>
+              <th>Route</th>
+              <th>Travel Date</th>
+              <th>Pax</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${allBookings.map(b => `
+              <tr>
+                <td><strong>${b.pnr}</strong></td>
+                <td>${b.trainNumber}</td>
+                <td>${b.fromStation} &rarr; ${b.toStation}</td>
+                <td>${b.travelDate}</td>
+                <td>${b.passengers.length}</td>
+                <td>₹${b.pricing.totalAmount}</td>
+                <td>
+                  <span class="chip" style="font-size:0.7rem; background:${b.status === 'CANCELLED' ? '#FFEBEE' : '#E8F5E9'}; color:${b.status === 'CANCELLED' ? '#D32F2F' : '#2E7D32'}; font-weight:700;">
+                    ${b.status}
+                  </span>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+  </script>
+</body>
+</html>

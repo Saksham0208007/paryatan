@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Registration — Paryatan</title>
+  <meta name="description" content="Sign in or register for your Paryatan travel account to explore scenic destinations and book train journeys across India.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Constant Top Bar (Every Page) -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" aria-label="Paryatan Home">
+        <div class="logo-badge">
+          <!-- Ticket / Train icon -->
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+            <path d="M3 10h18"></path>
+            <circle cx="8.5" cy="14.5" r="1.5"></circle>
+            <circle cx="15.5" cy="14.5" r="1.5"></circle>
+          </svg>
+        </div>
+        <div class="brand-text">Paryatan<span>.</span></div>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Constant Top Bar in required order: 1. Home, 2. Login/Register, 3. Explore Places, 4. Book a Ticket -->
+      <nav>
+        <ul class="nav-links" id="navLinksList">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <!-- BACKEND INTEGRATION NOTE: The backend swaps this slot for the user's name + Logout -->
+          <li class="nav-user-slot" id="navUserSlot">
+            <a href="auth.html" class="nav-link active" id="navAuthLink">Login / Register</a>
+          </li>
+          <li><a href="explore.html" class="nav-link">Explore Places</a></li>
+          <li><a href="booking.html" class="nav-link">Book a Ticket</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Auth Card Container -->
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo-row">
+          <div class="logo-badge" style="width:34px; height:34px;">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+              <path d="M3 10h18"></path>
+              <circle cx="8.5" cy="14.5" r="1.5"></circle>
+              <circle cx="15.5" cy="14.5" r="1.5"></circle>
+            </svg>
+          </div>
+          <span style="font-size: 1.4rem;">Paryatan<span style="color:var(--primary);">.</span></span>
+        </div>
+        <h1 class="auth-title" id="authHeading">Welcome back</h1>
+        <p class="auth-subtitle" id="authSubheading">Access your saved train trips and reservations</p>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="auth-tabs-bar" role="tablist">
+        <button type="button" class="auth-tab-btn active" id="tabBtnLogin" role="tab" aria-selected="true">
+          Sign In
+        </button>
+        <button type="button" class="auth-tab-btn" id="tabBtnRegister" role="tab" aria-selected="false">
+          Create Account
+        </button>
+      </div>
+
+      <!-- Feedback Area: for backend error/success messages (?error=email_exists) or client checks -->
+      <div id="authAlertArea" class="auth-alert-box" role="alert"></div>
+
+      <!-- ==========================================
+           1. LOGIN FORM
+           Backend contract: method="POST", action="login.php"
+           Fields: email, password
+           ========================================== -->
+      <form id="loginForm" method="POST" action="login.php" class="form-stacked">
+        <div class="form-group" id="grpLoginEmail">
+          <label for="loginEmail" class="form-label">
+            Email Address <span style="color:var(--error);">*</span>
+          </label>
+          <input 
+            type="email" 
+            id="loginEmail" 
+            name="email" 
+            class="form-control" 
+            placeholder="you@example.com" 
+            required 
+            autocomplete="email"
+          >
+          <span class="field-error-text">Please enter a valid email address.</span>
+        </div>
+
+        <div class="form-group" id="grpLoginPassword">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label for="loginPassword" class="form-label">
+              Password <span style="color:var(--error);">*</span>
+            </label>
+            <a href="#" onclick="alert('Password reset link has been dispatched to your email.'); return false;" style="font-size:0.75rem; color:var(--primary); font-weight:600;">Forgot?</a>
+          </div>
+          <input 
+            type="password" 
+            id="loginPassword" 
+            name="password" 
+            class="form-control" 
+            placeholder="••••••••" 
+            required 
+            autocomplete="current-password"
+          >
+          <span class="field-error-text">Password is required.</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-large btn-block" style="margin-top: 8px;" id="loginSubmitBtn">
+          Sign In to Paryatan
+        </button>
+
+        <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+          Don't have an account yet? 
+          <a href="#" id="linkSwitchToRegister" style="color: var(--primary); font-weight: 700;">Register now</a>
+        </p>
+      </form>
+
+      <!-- ==========================================
+           2. REGISTRATION FORM
+           Backend contract: method="POST", action="register.php"
+           Fields: name, phone, email, age, aadhaar, password, confirm_password
+           ========================================== -->
+      <form id="registerForm" method="POST" action="register.php" class="form-stacked" style="display: none;">
+        <!-- Full Name -->
+        <div class="form-group" id="grpRegName">
+          <label for="regName" class="form-label">
+            Full Name <span style="color:var(--error);">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="regName" 
+            name="name" 
+            class="form-control" 
+            placeholder="Rajesh Sharma" 
+            required
+            autocomplete="name"
+          >
+          <span class="field-error-text">Full name is required.</span>
+        </div>
+
+        <!-- Phone & Age (2-col) -->
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px;">
+          <div class="form-group" id="grpRegPhone">
+            <label for="regPhone" class="form-label">
+              Phone Number <span style="color:var(--error);">*</span>
+            </label>
+            <input 
+              type="tel" 
+              id="regPhone" 
+              name="phone" 
+              class="form-control" 
+              placeholder="9876543210" 
+              pattern="[0-9]{10}" 
+              maxlength="10" 
+              required
+              autocomplete="tel"
+            >
+            <span class="input-helper-text">10 digit mobile number</span>
+            <span class="field-error-text">Must be 10 digits.</span>
+          </div>
+
+          <div class="form-group" id="grpRegAge">
+            <label for="regAge" class="form-label">
+              Age <span style="color:var(--error);">*</span>
+            </label>
+            <input 
+              type="number" 
+              id="regAge" 
+              name="age" 
+              class="form-control" 
+              placeholder="28" 
+              min="1" 
+              max="120" 
+              required
+            >
+            <span class="input-helper-text">1–120 yrs</span>
+            <span class="field-error-text">Valid age 1-120.</span>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group" id="grpRegEmail">
+          <label for="regEmail" class="form-label">
+            Email Address <span style="color:var(--error);">*</span>
+          </label>
+          <input 
+            type="email" 
+            id="regEmail" 
+            name="email" 
+            class="form-control" 
+            placeholder="rajesh@example.com" 
+            required
+            autocomplete="email"
+          >
+          <span class="field-error-text">Enter a valid email address.</span>
+        </div>
+
+        <!-- Aadhaar Number -->
+        <div class="form-group" id="grpRegAadhaar">
+          <label for="regAadhaar" class="form-label">
+            Aadhaar Number <span style="color:var(--error);">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="regAadhaar" 
+            name="aadhaar" 
+            class="form-control" 
+            placeholder="1234 5678 9012" 
+            maxlength="12" 
+            required
+            pattern="[0-9]{12}"
+            inputmode="numeric"
+          >
+          <span class="input-helper-text">Exactly 12 numeric digits</span>
+          <span class="field-error-text">Must be exactly 12 numeric digits.</span>
+        </div>
+
+        <!-- Password & Confirm Password (2-col) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group" id="grpRegPassword">
+            <label for="regPassword" class="form-label">
+              Password <span style="color:var(--error);">*</span>
+            </label>
+            <input 
+              type="password" 
+              id="regPassword" 
+              name="password" 
+              class="form-control" 
+              placeholder="Min 8 chars" 
+              minlength="8" 
+              required
+              autocomplete="new-password"
+            >
+            <span class="input-helper-text">Min 8 characters</span>
+            <span class="field-error-text">Minimum 8 characters.</span>
+          </div>
+
+          <div class="form-group" id="grpRegConfirmPassword">
+            <label for="regConfirmPassword" class="form-label">
+              Confirm <span style="color:var(--error);">*</span>
+            </label>
+            <input 
+              type="password" 
+              id="regConfirmPassword" 
+              name="confirm_password" 
+              class="form-control" 
+              placeholder="Re-type password" 
+              minlength="8" 
+              required
+              autocomplete="new-password"
+            >
+            <span class="input-helper-text">Must match</span>
+            <span class="field-error-text">Passwords must match.</span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-large btn-block" style="margin-top: 8px;" id="regSubmitBtn">
+          Create Paryatan Account
+        </button>
+
+        <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+          Already registered? 
+          <a href="#" id="linkSwitchToLogin" style="color: var(--primary); font-weight: 700;">Sign in here</a>
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Paryatan. Built with HTML, Vanilla CSS &amp; JavaScript.</p>
+        <div class="credits-notice">
+          Form specifications matched with backend contract (<code>register.php</code> &amp; <code>login.php</code>)
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data/stations.js"></script>
+  <script src="js/data/spots.js"></script>
+  <script src="js/data/trains.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+
+  <script>
+    // Tab switching & form validation logic
+    const tabBtnLogin = document.getElementById("tabBtnLogin");
+    const tabBtnRegister = document.getElementById("tabBtnRegister");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const authHeading = document.getElementById("authHeading");
+    const authSubheading = document.getElementById("authSubheading");
+    const alertBox = document.getElementById("authAlertArea");
+
+    // Check query params for backend feedback (?error=... or ?registered=1 or ?next=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorParam = urlParams.get("error");
+    const registeredParam = urlParams.get("registered");
+    const nextUrl = urlParams.get("next") || "index.html";
+
+    if (errorParam) {
+      showAlert(decodeURIComponent(errorParam).replace(/_/g, " "), "error");
+    } else if (registeredParam) {
+      showAlert("Registration successful! You can now sign in.", "success");
+    }
+
+    function showAlert(msg, type = "error") {
+      alertBox.textContent = msg;
+      alertBox.className = `auth-alert-box show ${type}`;
+    }
+
+    function hideAlert() {
+      alertBox.className = "auth-alert-box";
+      alertBox.textContent = "";
+    }
+
+    function switchToLogin() {
+      tabBtnLogin.classList.add("active");
+      tabBtnLogin.setAttribute("aria-selected", "true");
+      tabBtnRegister.classList.remove("active");
+      tabBtnRegister.setAttribute("aria-selected", "false");
+      loginForm.style.display = "flex";
+      registerForm.style.display = "none";
+      authHeading.textContent = "Welcome back";
+      authSubheading.textContent = "Access your saved train trips and reservations";
+      hideAlert();
+    }
+
+    function switchToRegister() {
+      tabBtnRegister.classList.add("active");
+      tabBtnRegister.setAttribute("aria-selected", "true");
+      tabBtnLogin.classList.remove("active");
+      tabBtnLogin.setAttribute("aria-selected", "false");
+      registerForm.style.display = "flex";
+      loginForm.style.display = "none";
+      authHeading.textContent = "Create an account";
+      authSubheading.textContent = "Join Paryatan to plan and book unforgettable journeys";
+      hideAlert();
+    }
+
+    tabBtnLogin.addEventListener("click", switchToLogin);
+    tabBtnRegister.addEventListener("click", switchToRegister);
+    document.getElementById("linkSwitchToRegister").addEventListener("click", (e) => { e.preventDefault(); switchToRegister(); });
+    document.getElementById("linkSwitchToLogin").addEventListener("click", (e) => { e.preventDefault(); switchToLogin(); });
+
+    // Client-side Registration validation
+    registerForm.addEventListener("submit", function (e) {
+      let hasError = false;
+      hideAlert();
+
+      const nameInput = document.getElementById("regName");
+      const phoneInput = document.getElementById("regPhone");
+      const emailInput = document.getElementById("regEmail");
+      const ageInput = document.getElementById("regAge");
+      const aadhaarInput = document.getElementById("regAadhaar");
+      const passInput = document.getElementById("regPassword");
+      const confirmPassInput = document.getElementById("regConfirmPassword");
+
+      // Validate Phone (10 digits)
+      if (!/^\d{10}$/.test(phoneInput.value.trim())) {
+        document.getElementById("grpRegPhone").classList.add("has-error");
+        hasError = true;
+      } else {
+        document.getElementById("grpRegPhone").classList.remove("has-error");
+      }
+
+      // Validate Age (1-120)
+      const ageNum = parseInt(ageInput.value, 10);
+      if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
+        document.getElementById("grpRegAge").classList.add("has-error");
+        hasError = true;
+      } else {
+        document.getElementById("grpRegAge").classList.remove("has-error");
+      }
+
+      // Validate Aadhaar (exactly 12 digits)
+      if (!/^\d{12}$/.test(aadhaarInput.value.trim())) {
+        document.getElementById("grpRegAadhaar").classList.add("has-error");
+        hasError = true;
+      } else {
+        document.getElementById("grpRegAadhaar").classList.remove("has-error");
+      }
+
+      // Validate Password length (min 8)
+      if (passInput.value.length < 8) {
+        document.getElementById("grpRegPassword").classList.add("has-error");
+        hasError = true;
+      } else {
+        document.getElementById("grpRegPassword").classList.remove("has-error");
+      }
+
+      // Validate Confirm Password (must equal password)
+      if (passInput.value !== confirmPassInput.value) {
+        document.getElementById("grpRegConfirmPassword").classList.add("has-error");
+        hasError = true;
+      } else {
+        document.getElementById("grpRegConfirmPassword").classList.remove("has-error");
+      }
+
+      if (hasError) {
+        e.preventDefault();
+        showAlert("Please resolve the highlighted validation errors.", "error");
+        return;
+      }
+
+      // Frontend prototype simulation: If running without PHP backend, save user to localStorage
+      // When backend is connected, normal POST submission proceeds to register.php
+      if (window.location.protocol === "file:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+        // Mock save user session
+        e.preventDefault();
+        const newUser = {
+          name: nameInput.value.trim(),
+          phone: phoneInput.value.trim(),
+          email: emailInput.value.trim(),
+          age: ageNum,
+          aadhaarMasked: "XXXX-XXXX-" + aadhaarInput.value.trim().slice(-4)
+        };
+        ParyatanAPI.setCurrentUser(newUser);
+        showAlert("Account created! Redirecting...", "success");
+        setTimeout(() => {
+          window.location.href = nextUrl;
+        }, 800);
+      }
+    });
+
+    // Client-side Login validation
+    loginForm.addEventListener("submit", function (e) {
+      hideAlert();
+      const emailInput = document.getElementById("loginEmail");
+      const passInput = document.getElementById("loginPassword");
+
+      if (!emailInput.value || !passInput.value) {
+        e.preventDefault();
+        showAlert("Please provide both email and password.", "error");
+        return;
+      }
+
+      // Frontend prototype simulation
+      if (window.location.protocol === "file:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+        e.preventDefault();
+        const existingUser = ParyatanAPI.getCurrentUser() || {
+          name: emailInput.value.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, l => l.toUpperCase()),
+          email: emailInput.value.trim()
+        };
+        ParyatanAPI.setCurrentUser(existingUser);
+        showAlert("Logged in successfully! Redirecting...", "success");
+        setTimeout(() => {
+          window.location.href = nextUrl;
+        }, 800);
+      }
+    });
+  </script>
+</body>
+</html>

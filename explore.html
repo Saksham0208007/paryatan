@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explore Places — Paryatan</title>
+  <meta name="description" content="Explore India's most captivating architectural marvels, relaxing beaches, and enchanting mountains with train routes and reaching details.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Constant Top Bar (Every Page) -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" aria-label="Paryatan Home">
+        <div class="logo-badge">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+            <path d="M3 10h18"></path>
+            <circle cx="8.5" cy="14.5" r="1.5"></circle>
+            <circle cx="15.5" cy="14.5" r="1.5"></circle>
+          </svg>
+        </div>
+        <div class="brand-text">Paryatan<span>.</span></div>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Constant Top Bar in required order: 1. Home, 2. Login/Register, 3. Explore Places, 4. Book a Ticket -->
+      <nav>
+        <ul class="nav-links" id="navLinksList">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <!-- BACKEND INTEGRATION NOTE: The backend swaps this slot for the user's name + Logout -->
+          <li class="nav-user-slot" id="navUserSlot">
+            <a href="auth.html" class="nav-link" id="navAuthLink">Login / Register</a>
+          </li>
+          <li><a href="explore.html" class="nav-link active">Explore Places</a></li>
+          <li><a href="booking.html" class="nav-link">Book a Ticket</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Explore Content Area -->
+  <main class="container">
+    
+    <!-- 1. Spot Grid View (Default) -->
+    <section id="spotsGridViewSection">
+      <div class="explore-header">
+        <!-- Breadcrumb -->
+        <nav aria-label="Breadcrumb" style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">
+          <a href="index.html" style="color: var(--primary); font-weight: 600;">Home</a>
+          <span style="margin: 0 6px;">/</span>
+          <span>Explore Places</span>
+          <span style="margin: 0 6px;">/</span>
+          <span id="breadcrumbCategory" style="font-weight: 700; color: var(--text);">Enchanting Mountains</span>
+        </nav>
+
+        <h1 class="section-heading" id="exploreCategoryTitle">Enchanting Mountains</h1>
+        <p class="section-subheading" id="exploreCategoryDesc">
+          Discover summits, mist-covered valleys and high-altitude sanctuaries.
+        </p>
+
+        <!-- Category Tabs (All three categories always switchable at top) -->
+        <div class="category-nav-tabs" role="tablist">
+          <button class="tab-btn active" data-cat="mountains" role="tab" id="tabMountains">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
+            </svg>
+            <span>Enchanting Mountains</span>
+            <span class="tab-count">5</span>
+          </button>
+
+          <button class="tab-btn" data-cat="architecture" role="tab" id="tabArchitecture">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 21h18"></path>
+              <path d="M5 21V7l7-4 7 4v14"></path>
+              <path d="M9 10a3 3 0 0 1 6 0v11"></path>
+            </svg>
+            <span>Architectural Marvels</span>
+            <span class="tab-count">5</span>
+          </button>
+
+          <button class="tab-btn" data-cat="beaches" role="tab" id="tabBeaches">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 12h20"></path>
+              <path d="M20 12v8H4v-8"></path>
+              <path d="m4 12 8-8 8 8"></path>
+            </svg>
+            <span>Relaxing Beaches</span>
+            <span class="tab-count">5</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Spot Button-Cards Grid (Injected via JS) -->
+      <div class="spots-grid" id="spotsCardsContainer">
+        <!-- JS generates spot cards here -->
+      </div>
+    </section>
+
+    <!-- 2. Spot Detail View (Same page, no reload; full-section background with dark overlay) -->
+    <section class="spot-detail-container" id="spotDetailSection" aria-live="polite">
+      <div class="spot-detail-hero" id="detailHeroBackground">
+        <!-- Dark gradient overlay for readability -->
+        <div class="spot-detail-overlay"></div>
+
+        <!-- Back Button -->
+        <div class="spot-detail-back-bar">
+          <button class="btn-back" id="btnBackToGrid" aria-label="Return to spot grid">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back to Spots</span>
+          </button>
+        </div>
+
+        <!-- Content Overlay -->
+        <div class="spot-detail-body">
+          <div class="spot-detail-category-tag" id="detailCategoryTag">Category</div>
+          <h2 class="spot-detail-title" id="detailSpotName">Spot Name</h2>
+          <div class="spot-detail-location" id="detailSpotLocation">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span id="detailLocationText">State, India</span>
+          </div>
+
+          <!-- Glassmorphic Grid: Facts & How to Reach -->
+          <div class="spot-detail-grid">
+            <!-- Facts Panel -->
+            <div class="detail-glass-card">
+              <h3 class="detail-section-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                Key Facts &amp; Heritage
+              </h3>
+              <ul class="detail-facts-list" id="detailFactsList">
+                <!-- Injected via JS -->
+              </ul>
+            </div>
+
+            <!-- How to Reach Panel -->
+            <div class="detail-glass-card">
+              <h3 class="detail-section-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="3" width="15" height="13"></rect>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                  <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                  <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                </svg>
+                How to Reach
+              </h3>
+              <div class="reach-options-list">
+                <!-- By Train -->
+                <div class="reach-item">
+                  <div class="reach-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="4" y="3" width="16" height="16" rx="2"></rect>
+                      <path d="M4 11h16"></path>
+                      <circle cx="8" cy="15" r="1"></circle>
+                      <circle cx="16" cy="15" r="1"></circle>
+                      <path d="m9 19-3 3"></path>
+                      <path d="m15 19 3 3"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="reach-label">By Train (Nearest Station)</div>
+                    <div class="reach-desc" id="detailReachTrain">Train details...</div>
+                  </div>
+                </div>
+
+                <!-- By Air -->
+                <div class="reach-item">
+                  <div class="reach-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="reach-label">By Air</div>
+                    <div class="reach-desc" id="detailReachAir">Airport info...</div>
+                  </div>
+                </div>
+
+                <!-- By Road -->
+                <div class="reach-item">
+                  <div class="reach-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                      <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="reach-label">By Road</div>
+                    <div class="reach-desc" id="detailReachRoad">Roadway route...</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Action Bar: Station Highlight + Booking Button -->
+          <div class="spot-detail-actions">
+            <div class="station-highlight-box">
+              <div class="station-icon-tag" id="detailStationCodeBadge">AGC</div>
+              <div>
+                <div class="station-name-text" id="detailStationName">Agra Cantt</div>
+                <div class="station-sub-text" id="detailStationDistance">5.5 km from monument</div>
+              </div>
+            </div>
+
+            <!-- Booking Button per spec: booking.html?to=<spot_station> -->
+            <a href="#" class="btn btn-primary btn-large" id="btnBookThisPlace">
+              <span>Book tickets to this place</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+                <path d="M3 10h18"></path>
+                <circle cx="8.5" cy="14.5" r="1.5"></circle>
+                <circle cx="15.5" cy="14.5" r="1.5"></circle>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <div class="logo-badge" style="width: 32px; height: 32px;">
+              <svg viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+                <path d="M3 10h18"></path>
+                <circle cx="8.5" cy="14.5" r="1.5"></circle>
+                <circle cx="15.5" cy="14.5" r="1.5"></circle>
+              </svg>
+            </div>
+            <div class="brand-text">Paryatan<span>.</span></div>
+          </div>
+          <p>Explore 15 handpicked destinations across Architecture, Beaches, and Mountains with mapped Indian Railways connectivity.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Explore Categories</h4>
+          <ul class="footer-links">
+            <li><a href="explore.html?cat=mountains">Enchanting Mountains</a></li>
+            <li><a href="explore.html?cat=architecture">Architectural Marvels</a></li>
+            <li><a href="explore.html?cat=beaches">Relaxing Beaches</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="booking.html">Book a Ticket</a></li>
+            <li><a href="auth.html">Login / Register</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Data &amp; Integrity</h4>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+            Spot metadata, nearest stations, and high-resolution visuals read directly from local datasets.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Paryatan. All rights reserved.</p>
+        <div class="credits-notice">
+          Images sourced locally from <code>assets/images/</code> per project specifications.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data/stations.js"></script>
+  <script src="js/data/spots.js"></script>
+  <script src="js/data/trains.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+
+  <script>
+    // State
+    let currentCategory = "mountains";
+    let activeSpotId = null;
+
+    // Elements
+    const gridSection = document.getElementById("spotsGridViewSection");
+    const detailSection = document.getElementById("spotDetailSection");
+    const cardsContainer = document.getElementById("spotsCardsContainer");
+    const categoryTitle = document.getElementById("exploreCategoryTitle");
+    const categoryDesc = document.getElementById("exploreCategoryDesc");
+    const breadcrumbCategory = document.getElementById("breadcrumbCategory");
+    const tabButtons = document.querySelectorAll(".tab-btn");
+
+    // Initialize based on URL ?cat= and ?spot=
+    function initExplorePage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const catParam = urlParams.get("cat");
+      const spotParam = urlParams.get("spot");
+
+      // Spec rule: "no cat given: default to mountains, show all three categories as tabs"
+      if (catParam && ["mountains", "architecture", "beaches"].includes(catParam.toLowerCase())) {
+        currentCategory = catParam.toLowerCase();
+      } else {
+        currentCategory = "mountains";
+      }
+
+      setCategory(currentCategory, false);
+
+      // If a specific spot is in URL, open it directly
+      if (spotParam) {
+        openSpotDetail(spotParam);
+      }
+    }
+
+    // Set Active Category & Render Cards
+    function setCategory(catId, updateUrl = true) {
+      currentCategory = catId;
+
+      if (updateUrl) {
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set("cat", catId);
+        newUrl.searchParams.delete("spot");
+        window.history.pushState({}, "", newUrl);
+      }
+
+      // Update Tabs active state
+      tabButtons.forEach(btn => {
+        if (btn.getAttribute("data-cat") === catId) {
+          btn.classList.add("active");
+          btn.setAttribute("aria-selected", "true");
+        } else {
+          btn.classList.remove("active");
+          btn.setAttribute("aria-selected", "false");
+        }
+      });
+
+      // Update Headings & Breadcrumbs
+      const categoryData = ParyatanAPI.getCategory(catId);
+      if (categoryData) {
+        categoryTitle.textContent = categoryData.name;
+        categoryDesc.textContent = categoryData.description;
+        breadcrumbCategory.textContent = categoryData.name;
+      }
+
+      // Hide Detail View & Show Grid
+      closeSpotDetail();
+
+      // Render Cards
+      renderSpotsGrid(catId);
+    }
+
+    // Render Spot Cards Grid
+    function renderSpotsGrid(catId) {
+      const spots = ParyatanAPI.getSpotsByCategory(catId);
+      cardsContainer.innerHTML = "";
+
+      spots.forEach(spot => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "spot-card";
+        card.setAttribute("aria-label", `View details for ${spot.name}`);
+        card.onclick = () => openSpotDetail(spot.id);
+
+        card.innerHTML = `
+          <div class="spot-img-wrap">
+            <img src="${spot.image}" alt="${spot.name}" loading="lazy">
+            <div class="spot-state-badge">${spot.location}</div>
+          </div>
+          <div class="spot-content">
+            <h3 class="spot-title">${spot.name}</h3>
+            <div class="spot-station-chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="3" width="16" height="16" rx="2"></rect>
+                <path d="M4 11h16"></path>
+              </svg>
+              <span>Near ${spot.nearestStation.name} (${spot.nearestStation.code})</span>
+            </div>
+            <ul class="spot-facts-preview">
+              ${spot.facts.slice(0, 2).map(f => `<li>${f}</li>`).join("")}
+            </ul>
+            <div class="spot-card-action">
+              <span>View Heritage &amp; Trains</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </div>
+          </div>
+        `;
+
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    // Open Spot Detail View (Same page, no reload)
+    function openSpotDetail(spotId) {
+      const spot = ParyatanAPI.getSpot(spotId);
+      if (!spot) return;
+
+      activeSpotId = spot.id;
+
+      // Update URL query without page reload
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set("cat", spot.category);
+      newUrl.searchParams.set("spot", spot.id);
+      window.history.pushState({}, "", newUrl);
+
+      // Fill in Detail elements
+      const hero = document.getElementById("detailHeroBackground");
+      hero.style.backgroundImage = `url('${spot.image}')`;
+
+      document.getElementById("detailCategoryTag").textContent = spot.category;
+      document.getElementById("detailSpotName").textContent = spot.name;
+      document.getElementById("detailLocationText").textContent = spot.location;
+
+      // Fill Facts
+      const factsList = document.getElementById("detailFactsList");
+      factsList.innerHTML = spot.facts.map(fact => `<li>${fact}</li>`).join("");
+
+      // Fill How to Reach
+      document.getElementById("detailReachTrain").textContent = spot.reach.train;
+      document.getElementById("detailReachAir").textContent = spot.reach.air;
+      document.getElementById("detailReachRoad").textContent = spot.reach.road;
+
+      // Fill Station info
+      document.getElementById("detailStationCodeBadge").textContent = spot.nearestStation.code;
+      document.getElementById("detailStationName").textContent = spot.nearestStation.name;
+      document.getElementById("detailStationDistance").textContent = `${spot.nearestStation.distance} from destination`;
+
+      // Set Booking Button URL per spec: booking.html?to=<station>
+      const bookBtn = document.getElementById("btnBookThisPlace");
+      bookBtn.href = `booking.html?to=${encodeURIComponent(spot.nearestStation.code)}&spot=${encodeURIComponent(spot.id)}`;
+
+      // Toggle views
+      gridSection.style.display = "none";
+      detailSection.classList.add("active");
+
+      // Scroll to top of detail view
+      detailSection.scrollIntoView({ behavior: "smooth" });
+    }
+
+    // Close Detail View and Return to Grid
+    function closeSpotDetail() {
+      detailSection.classList.remove("active");
+      gridSection.style.display = "block";
+
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.delete("spot");
+      window.history.pushState({}, "", newUrl);
+    }
+
+    // Event Listeners for category tabs
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cat = btn.getAttribute("data-cat");
+        setCategory(cat, true);
+      });
+    });
+
+    // Back button
+    document.getElementById("btnBackToGrid").addEventListener("click", closeSpotDetail);
+
+    // Run on load
+    window.addEventListener("DOMContentLoaded", initExplorePage);
+    window.addEventListener("popstate", initExplorePage);
+  </script>
+</body>
+</html>

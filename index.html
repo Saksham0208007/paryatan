@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paryatan — Your Next Adventure Awaits</title>
+  <meta name="description" content="Paryatan is a destination-first railway travel and exploration portal. Discover breathtaking mountains, architectural wonders, and relaxing beaches across India.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Constant Top Bar (Every Page) -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" aria-label="Paryatan Home">
+        <div class="logo-badge">
+          <!-- Ticket / Train icon -->
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+            <path d="M3 10h18"></path>
+            <circle cx="8.5" cy="14.5" r="1.5"></circle>
+            <circle cx="15.5" cy="14.5" r="1.5"></circle>
+          </svg>
+        </div>
+        <div class="brand-text">Paryatan<span>.</span></div>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Constant Top Bar in required order: 1. Home, 2. Login/Register, 3. Explore Places, 4. Book a Ticket -->
+      <nav>
+        <ul class="nav-links" id="navLinksList">
+          <li><a href="index.html" class="nav-link active">Home</a></li>
+          <!-- BACKEND INTEGRATION NOTE: The backend swaps this slot for the user's name + Logout -->
+          <li class="nav-user-slot" id="navUserSlot">
+            <a href="auth.html" class="nav-link" id="navAuthLink">Login / Register</a>
+          </li>
+          <li><a href="explore.html" class="nav-link">Explore Places</a></li>
+          <li><a href="booking.html" class="nav-link">Book a Ticket</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="home-hero">
+    <div class="container">
+      <div class="hero-tagline-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        Destination-First Travel Experience
+      </div>
+
+      <!-- Large Brand Wordmark -->
+      <h1 class="brand-hero-title">
+        Paryatan<span>.</span>
+      </h1>
+
+      <!-- Official Tagline from Spec -->
+      <p class="hero-tagline">
+        Your next adventure awaits
+      </p>
+
+      <!-- Quick Action CTA -->
+      <div style="display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+        <a href="#categoriesSection" class="btn btn-primary btn-large">
+          <span>Explore Destinations</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+          </svg>
+        </a>
+        <a href="booking.html" class="btn btn-secondary btn-large">
+          <span>Search Trains Directly</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Train Search Strip -->
+  <section class="container">
+    <div class="quick-search-strip">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="logo-badge" style="width: 30px; height: 30px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--text);">Quick Train Planner</h2>
+        </div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Direct routes to 15 iconic Indian destinations</span>
+      </div>
+
+      <form action="booking.html" method="GET" class="form-grid-5">
+        <div class="form-group">
+          <label for="homeFromStation" class="form-label">Leaving From</label>
+          <select id="homeFromStation" name="from" class="form-control" required>
+            <option value="NDLS">New Delhi (NDLS)</option>
+            <option value="CSMT">Mumbai CSMT (CSMT)</option>
+            <option value="HWH">Howrah Jn (HWH)</option>
+            <option value="MAS">Chennai Central (MAS)</option>
+            <option value="SBC">Bengaluru (SBC)</option>
+            <option value="PUNE">Pune Jn (PUNE)</option>
+            <option value="ADI">Ahmedabad Jn (ADI)</option>
+            <option value="HYB">Hyderabad (HYB)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="homeToStation" class="form-label">Going To Destination</label>
+          <select id="homeToStation" name="to" class="form-control" required>
+            <optgroup label="Architecture">
+              <option value="AGC">Agra Cantt (Taj Mahal)</option>
+              <option value="JP">Jaipur Jn (Amer Fort)</option>
+              <option value="HPT">Hosapete Jn (Virupaksha Temple)</option>
+              <option value="MYS">Mysuru Jn (Mysore Palace)</option>
+              <option value="PURI">Puri (Konark Sun Temple)</option>
+            </optgroup>
+            <optgroup label="Relaxing Beaches">
+              <option value="THVM">Thivim (Ashwem & Arambol Beach)</option>
+              <option value="MAO">Madgaon (Varca Beach)</option>
+              <option value="GOK">Gokarna Road (Om Beach)</option>
+              <option value="VAK">Varkala Sivagiri (Varkala Beach)</option>
+            </optgroup>
+            <optgroup label="Enchanting Mountains">
+              <option value="AWY">Aluva (Anamudi & Meesapulimala)</option>
+              <option value="UAM">Udhagamandalam (Doddabetta / Ooty)</option>
+              <option value="ABR">Abu Road (Guru Shikhar / Mt Abu)</option>
+              <option value="PPI">Pipariya (Dhupgarh / Pachmarhi)</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="homeTravelDate" class="form-label">Travel Date</label>
+          <input type="date" id="homeTravelDate" name="date" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label for="homePassengers" class="form-label">Passengers</label>
+          <select id="homePassengers" name="passengers" class="form-control">
+            <option value="1">1 Person</option>
+            <option value="2">2 Persons</option>
+            <option value="3">3 Persons</option>
+            <option value="4">4 Persons</option>
+            <option value="5">5 Persons</option>
+            <option value="6">6 Persons</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="height: 44px;">
+          <span>Find Trains</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Categories Section (Page 1 Core Requirement) -->
+  <section class="home-categories-section" id="categoriesSection">
+    <div class="container">
+      <div class="section-heading-wrap">
+        <h2 class="section-heading">Where would you like to visit?</h2>
+        <p class="section-subheading">Choose your mood or landscape to browse curated destinations</p>
+      </div>
+
+      <!-- The Three Mandatory Buttons / Cards from Spec -->
+      <div class="grid-3">
+        <!-- 1. Enchanting Mountains -->
+        <a href="explore.html?cat=mountains" class="category-hero-card" id="cardMountains">
+          <div class="category-card-img-wrap">
+            <img src="assets/images/mountains/anamudimountain.jpeg" alt="Enchanting Mountains of India" loading="lazy">
+            <div class="category-badge-overlay">Peaks &amp; Trails</div>
+          </div>
+          <div class="category-card-content">
+            <h3 class="category-card-title">Enchanting Mountains</h3>
+            <p class="category-card-desc">
+              Towering summits, mist-shrouded valleys, aromatic shola forests and sunrise vantage points across the Western Ghats and Satpura range.
+            </p>
+            <div class="category-card-footer">
+              <span class="category-spots-count">5 Handpicked Spots</span>
+              <span class="category-explore-link">
+                Explore Mountains
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 2. Architectural Marvels -->
+        <a href="explore.html?cat=architecture" class="category-hero-card" id="cardArchitecture">
+          <div class="category-card-img-wrap">
+            <img src="assets/images/architecture/tajmahal.jpeg" alt="Architectural Marvels of India" loading="lazy">
+            <div class="category-badge-overlay">Heritage &amp; History</div>
+          </div>
+          <div class="category-card-content">
+            <h3 class="category-card-title">Architectural Marvels</h3>
+            <p class="category-card-desc">
+              Ancient stone chariots, Mughal marble domes, Dravidian gopurams and regal palaces celebrating centuries of sublime craftsmanship.
+            </p>
+            <div class="category-card-footer">
+              <span class="category-spots-count">5 Handpicked Spots</span>
+              <span class="category-explore-link">
+                Explore Architecture
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 3. Relaxing Beaches -->
+        <a href="explore.html?cat=beaches" class="category-hero-card" id="cardBeaches">
+          <div class="category-card-img-wrap">
+            <img src="assets/images/beaches/arambolbeach.jpeg" alt="Relaxing Beaches of India" loading="lazy">
+            <div class="category-badge-overlay">Coastal Serenity</div>
+          </div>
+          <div class="category-card-content">
+            <h3 class="category-card-title">Relaxing Beaches</h3>
+            <p class="category-card-desc">
+              Silver sands, turquoise Arabian Sea waves, dramatic laterite cliffs, dolphin coves and bohemian drum circles along pristine shores.
+            </p>
+            <div class="category-card-footer">
+              <span class="category-spots-count">5 Handpicked Spots</span>
+              <span class="category-explore-link">
+                Explore Beaches
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Paryatan Highlights Grid -->
+  <section class="container" style="margin-bottom: 60px;">
+    <div class="section-heading-wrap" style="margin-bottom: 24px;">
+      <h3 style="font-size: 1.3rem; font-weight: 700;">Why travel with Paryatan?</h3>
+      <p class="section-subheading">Designed for travelers who choose destinations first and journey by rail</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+            <line x1="8" y1="2" x2="8" y2="18"></line>
+            <line x1="16" y1="6" x2="16" y2="22"></line>
+          </svg>
+        </div>
+        <div>
+          <h4 class="feature-title">Destination-First Flow</h4>
+          <p class="feature-desc">Start with places you dream of seeing. We automatically link the nearest verified railway station and last-mile travel info.</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+        <div>
+          <h4 class="feature-title">Real-Time Seat Logic</h4>
+          <p class="feature-desc">Intelligent booking seat deduction prevents overbooking and simulates true Indian Railways reservation availability.</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 14 14"></polyline>
+          </svg>
+        </div>
+        <div>
+          <h4 class="feature-title">Instant PNR &amp; Retrieval</h4>
+          <p class="feature-desc">Receive a 10-digit authentic PNR ticket instantly, with passenger berth allotments saved securely in your browser.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <div class="logo-badge" style="width: 32px; height: 32px;">
+              <svg viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+                <path d="M3 10h18"></path>
+                <circle cx="8.5" cy="14.5" r="1.5"></circle>
+                <circle cx="15.5" cy="14.5" r="1.5"></circle>
+              </svg>
+            </div>
+            <div class="brand-text">Paryatan<span>.</span></div>
+          </div>
+          <p>Your next adventure awaits. Experience destination-first train discovery across India's majestic mountains, beaches, and monuments.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Explore Categories</h4>
+          <ul class="footer-links">
+            <li><a href="explore.html?cat=mountains">Enchanting Mountains</a></li>
+            <li><a href="explore.html?cat=architecture">Architectural Marvels</a></li>
+            <li><a href="explore.html?cat=beaches">Relaxing Beaches</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Quick Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="explore.html">Explore Spots</a></li>
+            <li><a href="booking.html">Book Tickets</a></li>
+            <li><a href="auth.html">Login / Register</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Platform Info</h4>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+            Frontend built with HTML5, CSS3 &amp; Vanilla JavaScript adhering to the WD_OEP specification.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Paryatan. All rights reserved.</p>
+        <div class="credits-notice">
+          <strong>Image Credits:</strong> Curated destination imagery stored locally in <code>assets/images/</code> (WD_OEP asset pack).
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data/stations.js"></script>
+  <script src="js/data/spots.js"></script>
+  <script src="js/data/trains.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+
+  <script>
+    // Set default travel date to tomorrow in the quick search form
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+    const dateInput = document.getElementById("homeTravelDate");
+    if (dateInput) {
+      dateInput.value = tomorrowStr;
+      dateInput.min = tomorrowStr;
+    }
+  </script>
+</body>
+</html>
